@@ -38,22 +38,6 @@ Find.register("Background", function(self) {
     Find.browser.runtime.onInstalled.addListener((installation) => {
         self.installationDetails = installation;
 
-        if(Find.browserId !== 'Firefox') {
-            let scripts =  Find.browser.runtime.getManifest().content_scripts[0].js;
-            Find.browser.tabs.query({}, (tabs) => {
-                for(let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-                    let url = tabs[tabIndex].url;
-                    if(url.match(/chrome:\/\/.*/) || url.match(/https:\/\/chrome.google.com\/webstore\/.*/)) {
-                        continue;
-                    }
-
-                    for (let i = 0; i < scripts.length; i++) {
-                        Find.Background.ContentProxy.executeScript(tabs[tabIndex], {file: scripts[i]});
-                    }
-                }
-            });
-        }
-
         if(installation.reason === 'install') {
             Find.browser.tabs.create({url: Find.browser.extension.getURL("popup/help.html")});
         }
