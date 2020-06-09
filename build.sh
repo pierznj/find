@@ -2,7 +2,7 @@
 
 ME=$0
 ROOT_DIR=$PWD
-BUILD_DIR="$ROOT_DIR/.build"
+BUILD_DIR="$ROOT_DIR/build"
 MANIFEST="$ROOT_DIR/manifest.json"
 VERSION=
 
@@ -84,8 +84,8 @@ fi
 # Create build directory structure
 echo "$ME: Creating the build directory structure under $BUILD_DIR..."
 rm -rf "$BUILD_DIR"
-mkdir --parents --verbose "$BUILD_DIR/chr"
-mkdir --parents --verbose "$BUILD_DIR/moz"
+mkdir -pv "$BUILD_DIR/chr"
+mkdir -pv "$BUILD_DIR/moz"
 
 # Copy project src to build directory
 echo "$ME: Copying project source files to build directory..."

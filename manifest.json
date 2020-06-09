@@ -28,6 +28,7 @@
     "scripts": [
       "app.js",
       "/background/browser-action-proxy.js",
+      "/background/external-action-proxy.js",
       "/background/content-proxy.js",
       "/background/background.js",
       "/background/omni.js"
@@ -47,7 +48,7 @@
     ]
   }],
   "omnibox": {
-    "keyword" : "find"
+    "keyword": "find"
   },
   "commands": {
     "_execute_browser_action": {
