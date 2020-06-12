@@ -12,7 +12,7 @@
  * Once the extension closes, the page is restored using the UUIDs from the
  * document representation object.
  * */
-Find.register('Content.Parser', function(self) {
+Find.register('Content.Parser', function (self) {
 
 	/**
 	 * Walk the pages DOM tree and construct the document representation object, while
@@ -20,15 +20,23 @@ Find.register('Content.Parser', function(self) {
 	 *
 	 * @return {object} the document representation object
 	 * */
-	self.buildDOMReferenceObject = function() {
-		let DOMTreeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, {acceptNode: nodeFilter}, false);
+	self.buildDOMReferenceObject = function () {
+		let DOMTreeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, {
+			acceptNode: nodeFilter
+		}, false);
 		let DOMModelObject = {};
 		let reachedEndOfTree = false;
 		let groupIndex = 0;
 		let blockLevels = [];
 		let elementBoundary = false;
-		let preformatted = {flag: false, index: null};
-		let hidden = {flag: false, index: null};
+		let preformatted = {
+			flag: false,
+			index: null
+		};
+		let hidden = {
+			flag: false,
+			index: null
+		};
 		let node = DOMTreeWalker.root;
 
 		while (!reachedEndOfTree) {
@@ -38,7 +46,10 @@ Find.register('Content.Parser', function(self) {
 				reachedEndOfTree = true;
 			}
 
-			let textGroup = {group: [], preformatted: false};
+			let textGroup = {
+				group: [],
+				preformatted: false
+			};
 			while (node) {
 				let nodeDepth = getNodeTreeDepth(node);
 
@@ -119,7 +130,11 @@ Find.register('Content.Parser', function(self) {
 					node.parentNode.insertBefore(wrapperElement, node);
 					wrapperElement.appendChild(node);
 
-					let textNodeInformation = {groupIndex: groupIndex, text: nodeText, elementUUID: identifierUUID};
+					let textNodeInformation = {
+						groupIndex: groupIndex,
+						text: nodeText,
+						elementUUID: identifierUUID
+					};
 					textGroup.group.push(textNodeInformation);
 					textGroup.preformatted = preformatted.flag;
 				}
@@ -146,9 +161,12 @@ Find.register('Content.Parser', function(self) {
 	 *
 	 * @param {array} uuids - A list of UUIDs
 	 * */
-	self.restoreWebPage = function(uuids) {
+	self.restoreWebPage = function (uuids) {
 		for (let index = 0; index < uuids.length; index++) {
 			let el = document.getElementById(uuids[index]);
+			if (!el) {
+				continue;
+			}
 			let parent = el.parentElement;
 
 			while (el.firstChild) {
@@ -169,7 +187,7 @@ Find.register('Content.Parser', function(self) {
 	 * */
 	function nodeFilter(node) {
 		if (isElementNode(node)) {
-			switch(node.tagName.toLowerCase()) {
+			switch (node.tagName.toLowerCase()) {
 				case 'script':
 				case 'noscript':
 				case 'style':

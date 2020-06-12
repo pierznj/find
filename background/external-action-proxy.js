@@ -39,18 +39,13 @@ Find.register("Background.ExternalActionProxy", function () {
   Find.browser.runtime.onMessageExternal.addListener(
     function (message, sender, sendResponse) {
       let activeTab = null;
-      Find.browser.tabs.query({
-        // active: true,
-        // currentWindow: true
-      }, (tabs) => {
-        activeTab = tabs[0];
+      Find.browser.tabs.get(message.tabId, (tab) => {
         console.log(`received a cross-extension message: ${JSON.stringify(message)}`);
-        actionDispatch(message, activeTab, (resp) => {
+        actionDispatch(message, tab, (resp) => {
           console.log(`received a cross-extension message response: ${JSON.stringify(resp)}`);
           sendResponse(resp);
         });
       });
-
     });
 
 
@@ -72,9 +67,9 @@ Find.register("Background.ExternalActionProxy", function () {
         });
         break;
       case 'init':
+        Find.Background.restorePageState(tab);
         Find.Background.initializeBrowserAction(message, tab, () => {
-          Find.Background.initializePage(tab);
-          sendResponse();
+          Find.Background.initializePage(tab, sendResponse);
         });
         break;
       default:

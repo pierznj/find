@@ -102,10 +102,13 @@ Find.register("Background", function (self) {
      *
      * @param {object} tab - Information about the active tab in the current window.
      * */
-    self.initializePage = function (tab) {
+    self.initializePage = function (tab, callback) {
         Find.Background.ContentProxy.buildDocumentRepresentation(tab, (model) => {
             documentRepresentation = model;
             index = 0;
+            if (callback) {
+                callback();
+            }
         });
     };
 
@@ -118,6 +121,9 @@ Find.register("Background", function (self) {
      * highlights are not removed, and are persisted in the page.
      * */
     self.restorePageState = function (tab, restoreHighlights) {
+        if (!documentRepresentation) {
+            return;
+        }
         if (restoreHighlights === undefined || restoreHighlights) {
             Find.Background.ContentProxy.clearPageHighlights(tab);
         }
