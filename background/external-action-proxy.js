@@ -48,10 +48,6 @@ Find.register("Background.ExternalActionProxy", function () {
         actionDispatch(message, activeTab, (resp) => {
           console.log(`received a cross-extension message response: ${JSON.stringify(resp)}`);
           sendResponse(resp);
-          // only build the DOM representation object after the browser action is initialized
-          if (message.action === 'init') {
-            Find.Background.initializePage(activeTab);
-          }
         });
       });
 
@@ -70,15 +66,23 @@ Find.register("Background.ExternalActionProxy", function () {
   function actionDispatch(message, tab, sendResponse) {
     let action = message.action;
     switch (action) {
-      case 'check_matches':
-        Find.Background.updateSearch(message, tab, sendResponse);
+      case 'get_matches':
+        Find.Background.updateSearch(message, tab, () => {
+          Find.Background.extractOccurrences(message, tab, sendResponse);
+        });
         break;
       case 'init':
-        Find.Background.initializeBrowserAction(message, tab, sendResponse);
+        Find.Background.initializeBrowserAction(message, tab, () => {
+          Find.Background.initializePage(tab);
+          sendResponse();
+        });
         break;
-      case 'get_occurrence':
-        Find.Background.extractOccurrences(message, tab, sendResponse);
-        break;
+      default:
+        const msg = `Unknown action type ${action} received`;
+        console.log(msg);
+        sendResponse({
+          error: msg
+        });
     }
   }
 });
